@@ -144,3 +144,14 @@ input = {
 };
 expected = [];
 test(func.bind(input.root), {target: input.target}, expected, testNum, lowestTest, highestTest);
+
+// Test case 4
+input = {
+  root: new BinaryTree('A')
+    .insert('B', 'C', true)               // first .insert must END with 'true' argument
+    .insert(false, 'D', 'E', 'F', 'G')    // subsequent .inserts must START with 'false' argument...
+    .insert(true, 'H'),                   // ...except the last .insert which must START with 'true' argument
+  target: 'G',
+};
+expected = ['A', 'C', 'G'];
+test(func.bind(input.root), {target: input.target}, expected, testNum, lowestTest, highestTest);
