@@ -45,17 +45,17 @@ class BinaryTree {
     // array index 1, which is either going to be the correct path bubbled up, or if no path, then an empty array bubbled up.
 
     const helper = (node, currentPath) => {
-      if (!node) return [false, []];
-      const newPath = [...currentPath, node.value];
-      if (node.value === target) return [true, newPath];
+      if (!node) return [false, []];                      // base case false: if no more nodes on this path
+      const newPath = [...currentPath, node.value];       // try this path by pushing the current node into the path
+      if (node.value === target) return [true, newPath];  // base case true: if current node is your target
       const goLeft = go(node.left, newPath);
-      if (goLeft[0]) return [true, goLeft[1]];
+      if (goLeft[0]) return [true, goLeft[1]];            // recursive case true: if continuing to your left ultimately finds the target
       const goRight = go(node.right, newPath);
-      if (goRight[0]) return [true, goRight[1]];
-      return [false, []]
+      if (goRight[0]) return [true, goRight[1]];          // recursive case true: if continuing to your right ultimately finds the target
+      return [false, []]                                  // recursive case false: going any further would be a dead end
     }
 
-    return helper(this, [])[1];
+    return helper(this, [])[1];                           // the correct path at [1] (or empty path) has been bubbled up from base case through the recursive cases
   }
 
   solution_2 (target) {
