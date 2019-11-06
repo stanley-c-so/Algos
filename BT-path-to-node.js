@@ -31,11 +31,36 @@ class BinaryTree {
   }
 
   // SWITCHING BETWEEN SOLUTIONS:
-  findPathToTarget (target) { return this.solution_1(target); }
+  findPathToTarget (target) { return this.solution_2(target); }
 
   solution_1 (target) {
 
-    // SOLUTION 1 [O(n) time (n is the number of nodes in the tree), O(d) space (d is the depth of the tree)]:
+    // SOLUTION 1 [O(n) time (n is the number of nodes in the tree), O(d^2) space (d is the depth of the tree) because with each iteration you hold longer and longer clones of the path]:
+    // this solution uses DFS. the heavy lifting is done by a helper function which takes a current node, and a record of the current path up to that point. the helper function returns
+    // a tuple that contains a boolean of whether a valid path exists through this node, and an array indicating that path if true, or empty array if false. the main function invokes
+    // the helper with initial values of 'this' (the root) as the current node, and an empty array is the path so far. the helper function first checks to see if the current node exists.
+    // if not, return [false, []]. otherwise, clone the old path and add the current node value to the end of newPath. then, attempt to recurse to the left - if the goLeft[0] is true,
+    // then a path was found, so return [true, goLeft[1]] to 'bubble up' the boolean as well as the full path. otherwise, attempt the same by recursing to the right. if still no path,
+    // then this node is a dead end, so we return [false, []] to 'bubble up' that information. in the main function, after helper is invoked, we ultimately grab the path contained in
+    // array index 1, which is either going to be the correct path bubbled up, or if no path, then an empty array bubbled up.
+
+    const helper = (node, currentPath) => {
+      if (!node) return [false, []];
+      const newPath = [...currentPath, node.value];
+      if (node.value === target) return [true, newPath];
+      const goLeft = go(node.left, newPath);
+      if (goLeft[0]) return [true, goLeft[1]];
+      const goRight = go(node.right, newPath);
+      if (goRight[0]) return [true, goRight[1]];
+      return [false, []]
+    }
+
+    return helper(this, [])[1];
+  }
+
+  solution_2 (target) {
+
+    // SOLUTION 2 [O(n) time (n is the number of nodes in the tree), O(d) space (d is the depth of the tree)]:
     // this solution uses DFS backtracking. we start with an initial output 'path' of []. we write a recursive 'go' function that returns a boolean whether a valid path exists, given
     // the current path described in output. if the current node does not exist, return false. otherwise, add the current node's value to the output path. if the current node's value
     // is the target, return true. otherwise, recurse on node.left and node.right. if either are those ultimately result in true, then return true (which 'bubbles up' the truthy
