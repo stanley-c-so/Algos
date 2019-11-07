@@ -26,7 +26,7 @@
 // Output: false
 
 // SWITCHING BETWEEN SOLUTIONS:
-const wordBreak = solution_1;
+const wordBreak = solution_2;
 
 function solution_1 (s, wordDict) {
 
@@ -69,6 +69,45 @@ function solution_1 (s, wordDict) {
   return memo[s.length];
 }
 
+function solution_2 (s, wordDict) {
+
+  // SOLUTION 2 [O(n^2) time, O(n) space]:
+  // we use a stack (queue, but order doesn't matter, so stack is better). the stack will represent potential start points - meaning that the substring from the beginning up to but
+  // excluding the start point can be made with our dictionary. it makes sense, then, to initialize the stack with [0] (because the substring from beginning up to but excluding index 0
+  // is the empty string, which is valid). we pop the latest element (potential start point) out of the stack, and we consider all substrings by iterating end from start + 1 up to and
+  // including s.length. along the way, we check each resulting substring to see if it is in the dictionary. if so, then add end to the stack as the next potential start point, UNLESS
+  // end === s.length, in which case the entire remaining string is in the dictionary, and we have hit a base case and we are done - return true immediately. (it is VITALLY IMPORTANT
+  // that we keep track of starts that we have already tried. for this reason, when we pop from the stack, we should check if the start has already been attempted - if so, skip it.
+  // else, add it to the list of things we have already attempted. on the other end of it, we can also check if the start has already been attempted before we bother adding a potential
+  // start back into the stack. if we fail to do this, we may get an never-ending stack!) obviously, if the stack ever runs dry, then we have checked all possibilities, so we return
+  // false.
+
+  // EDGE CASES (ALTHOUGH THERE IS NO NEED, GIVEN THAT THE PROBLEM STATES THAT s AND wordDict WILL ALWAYS BE NON-EMPTY)
+  if (!s) return true;                  // empty string --> true, regardless of the state of the dictionary
+  if (!wordDict.length) return false;   // empty dictionary --> false, unless string is also empty (but that would have been captured above)
+
+  // INITIALIZATIONS
+  const betterDict = new Set(wordDict);                     // for faster dictionary lookup - not strictly necessary because you could always use wordDict.includes(...)
+  const startsAlreadyTried = new Set();                     // IMPORTANT! needed to prevent never-ending stack
+
+  // STACK - BETTER THAN QUEUE BECAUSE .pop IS O(1) UNLIKE .shift WHICH IS O(n). WE CAN DO THIS SINCE ORDER DOESN'T MATTER!
+  const stack = [0];                                        // initialize with 0, which represents that everything before index 0 (i.e. empty string '') CAN be made with dictionary
+  while (stack.length) {
+    const start = stack.pop();
+    if (startsAlreadyTried.has(start)) continue;            // if we already analyzed this start, continue to next iteration (needed to prevent never-ending stack!)
+    startsAlreadyTried.add(start)                           // otherwise, add this start to the list of things we have already tried
+    for (let end = start + 1; end <= s.length; end++) {     // check for all potential endings from start + 1 up to the end
+      if (betterDict.has(s.slice(start, end))) {            // if the substring between start and end is a valid word...
+        if (end === s.length) return true;                  // ...BASE CASE: if end === s.length, we are DONE! return true
+        if (!startsAlreadyTried.has(end)) stack.push(end);  // ...otherwise, add end (which is excluded from substring) to the stack as the next potential start
+      }
+    }
+  }
+
+  // IF STACK RUNS DRY, THEN RETURN FALSE
+  return false;
+}
+
 // TEST CASES
 
 const test = require('./_test');
@@ -101,9 +140,6 @@ input = {
 };
 expected = false;
 test(func, input, expected, testNum, lowestTest, highestTest);
-
-"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"
-["a","aa","aaa","aaaa","aaaaa","aaaaaa","aaaaaaa","aaaaaaaa","aaaaaaaaa","aaaaaaaaaa"]
 
 // Test case 4
 input = {
