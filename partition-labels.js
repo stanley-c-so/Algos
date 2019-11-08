@@ -33,8 +33,7 @@ function solution_1 (S) {
   // return a single array of partitioned strings. notice that all the cut positions will be found from left to right, but every candidate cut position needs to be evaluated
   // against the terminal positions of every letter - hence the quadratic time.
 
-  const partitions = cutString(S);
-  return partitions.map(partition => partition.length);
+  return cutString(S).map(partition => partition.length);
 
   // HELPER FUNCTION(S) BELOW
 
