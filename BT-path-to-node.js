@@ -31,7 +31,7 @@ class BinaryTree {
   }
 
   // SWITCHING BETWEEN SOLUTIONS:
-  findPathToTarget (target) { return this.solution_2(target); }
+  findPathToTarget (target) { return this.solution_2(...arguments); }
 
   solution_1 (target) {
 
