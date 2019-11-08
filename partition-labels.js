@@ -18,11 +18,11 @@
 // S will consist of lowercase letters ('a' to 'z') only.
 
 // SWITCHING BETWEEN SOLUTIONS:
-const partitionLabels = solution_2;
+const partitionLabels = solution_3;
 
 function solution_1 (S, start = 0, letterTerminals) {
 
-  // SOLUTION 1 [O(n^2) time, O(n^2?) space (when taking into account the call stack)]:
+  // SOLUTION 1 [O(n^2) time, O(n) space]:
   // this solution takes in the input string, and proceeds to chop up the first possible partition from the left, and returns an array of the length of that partition,
   // concatenated with a recursive call on the remainder of the string. in the base case, if the cut index reaches S.length, then we have reached the end of the string,
   // so we return an array of the length of the current string segment. the way the logic works for finding the partition is as follows: first, we populate a memo called
@@ -60,7 +60,39 @@ function solution_1 (S, start = 0, letterTerminals) {
 
 function solution_2 (S) {
 
-  // SOLUTION 2 [O(n) time, O(n) space]:
+  // SOLUTION 2 [O(n^2) time, O(n) space]:
+  // same as above, but in iterative form instead of recursive, thus eliminating the call stack.
+
+  // POPULATE letterTerminals
+  const letterTerminals = {};
+  for (let i = 0; i < S.length; i++) {
+    if (!(S[i] in letterTerminals)) {
+      letterTerminals[S[i]] = {first: i, last: i};
+    } else {
+      letterTerminals[S[i]].last = i;
+    }
+  }
+
+  // OTHER INITIALIZATIONS
+  const output = [];
+  let start = 0;        // start index of current segment
+
+  // ITERATE THROUGH STRING - WHENEVER A VALID PARTITION IS FOUND, FIND ITS LENGTH
+  for (let i = 1; i <= S.length; i++) {
+    if (i === S.length || Object.keys(letterTerminals).every(letter =>        // note that if i === S.length we have reached the end so we can short circuit this condition
+      i <= letterTerminals[letter].first || i > letterTerminals[letter].last  // valid partition if for every letter, every occurrence of the letter is before or after cut
+    )) {
+      output.push(i - start);                                                 // the length of the valid segment is i (current index) - start (start index of the segment)
+      start = i;                                                              // reset start index for next segment
+    }
+  }
+
+  return output;
+}
+
+function solution_3 (S) {
+
+  // SOLUTION 3 [O(n) time, O(n) space]:
   // similar to above, we are greedily going from left to right and finding each valid cut position as they come. however, here, we have a more efficient way of checking if a candidate
   // cut position is valid. instead of checking it against the terminals of each letter, instead we can apply the following logic: if our leftmost partition includes the first letter,
   // then there is no way we can end the partition until after the final occurrence of the first letter. (assume that this is somewhere in the middle of the string.) so, we must include
