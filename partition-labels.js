@@ -20,25 +20,23 @@
 // SWITCHING BETWEEN SOLUTIONS:
 const partitionLabels = solution_2;
 
-function solution_1 (S) {
+function solution_1 (S, start = 0, letterTerminals) {
 
   // SOLUTION 1 [O(n^2) time, O(n^2?) space (when taking into account the call stack)]:
-  // this solution uses a helper function, cutString, that does most of the heavy lifting - it takes in the input string, and proceeds to chop it up into the appropriate
-  // partitions, and returns an array of the partitioned strings. the main function then maps them according to their length. the cutString helper function works by first
-  // populating a memo called letterTerminals that iterates through every letter of the string and tracks the indices of their first and last appearance. then, it iterates
-  // through every possible index where a partition can be made (starting at 1) and evaluates whether that index is either less than or equal to the first appearance OR
-  // greater than the last appearance for EVERY letter in the memo - if so, then this is a valid partition, because for each letter, every occurrence of that letter either
-  // appears before or after that cut. whenever a valid cut is found, we slice from the beginning of the string to the cut position, and concatenate it with a recursed call
-  // of cutString on the remainder of the string. in the base case, we simply return the entire (sub)string in array form. eventually, the original call of cutString should
+  // this solution takes in the input string, and proceeds to chop up the first possible partition from the left, and returns an array of the length of that partition,
+  // concatenated with a recursive call on the remainder of the string. in the base case, if the cut index reaches S.length, then we have reached the end of the string,
+  // so we return an array of the length of the current string segment. the way the logic works for finding the partition is as follows: first, we populate a memo called
+  // letterTerminals that iterates through every letter of the string and tracks the indices of their first and last appearance. then, we iterate through every possible
+  // index where a partition can be made (starting at 1) and evaluates whether that index is either less than or equal to the first appearance OR greater than the last
+  // appearance for EVERY letter in the memo - if so, then this is a valid partition, because for each letter, every occurrence of that letter either appears before or
+  // after that cut. whenever a valid cut is found, we slice from the beginning of the string to the cut position, and concatenate it with a recursed call of this function
+  // on the remainder of the string. in the base case, we simply return the entire (sub)string in array form. thus, eventually, the original call of our function should
   // return a single array of partitioned strings. notice that all the cut positions will be found from left to right, but every candidate cut position needs to be evaluated
   // against the terminal positions of every letter - hence the quadratic time.
 
-  return cutString(S).map(partition => partition.length);
-
-  // HELPER FUNCTION(S) BELOW
-
-  function cutString (S) {   
-    const letterTerminals = {};
+  // STEP 1: IF ORIGINAL CALL OF THIS FUNCTION, POPULATE letterTerminals
+  if (!letterTerminals) {
+    letterTerminals = {};
     for (let i = 0; i < S.length; i++) {
       if (!(S[i] in letterTerminals)) {
         letterTerminals[S[i]] = {first: i, last: i};
@@ -46,15 +44,18 @@ function solution_1 (S) {
         letterTerminals[S[i]].last = i;
       }
     }
-    for (let i = 1; i < S.length; i++) {
-      if (Object.keys(letterTerminals).every(letter =>
-        i <= letterTerminals[letter].first || i > letterTerminals[letter].last    // valid partition if for every letter, every occurrence of the letter is before or after cut
-      )) {
-        return [S.slice(0, i)].concat(cutString(S.slice(i)));   // recursive case - slice from beginning up to the cut, and recurse on the remainder of (sub)string
-      }
+  }
+
+  // STEP 2: ITERATE THROUGH STRING - WHENEVER A VALID PARTITION IS FOUND, FIND ITS LENGTH
+  for (let i = start + 1; i < S.length; i++) {
+    if (Object.keys(letterTerminals).every(letter =>
+      i <= letterTerminals[letter].first || i > letterTerminals[letter].last  // valid partition if for every letter, every occurrence of the letter is before or after cut
+    )) {
+      return [i - start].concat(partitionLabels(S, i, letterTerminals));      // recursive case - slice from beginning up to the cut, and recurse on the remainder of (sub)string
     }
-    return [S];                                                 // base case - no more cuts can be made on this (sub)string - return entire (sub)string in array form
-  };
+  }
+
+  return [S.length - start];      // base case - no more cuts can be made on this (sub)string - return entire (sub)string in array form
 }
 
 function solution_2 (S) {
