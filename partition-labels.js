@@ -105,17 +105,17 @@ const highestTest = 0 || Infinity;
 
 // Test case 1
 input = {
+  S: 'abccaddbeffe',
+};
+expected = [8, 4];
+test(func, input, expected, testNum, lowestTest, highestTest);
+
+// Test case 2
+input = {
   S: 'ababcbacadefegdehijhklij',
 };
 expected = [9, 7, 8];
 test(func, input, expected, testNum, lowestTest, highestTest);
-
-// // Test case 2
-// input = {
-//   S: 'INPUT_HERE',
-// };
-// expected = 'EXPECTED_HERE';
-// test(func, input, expected, testNum, lowestTest, highestTest);
 
 // // Test case 3
 // input = {
