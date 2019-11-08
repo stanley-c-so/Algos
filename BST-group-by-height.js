@@ -43,7 +43,7 @@ class BST {
   }
 
   // SWITCHING BETWEEN SOLUTIONS:
-  groupByHeight () { return this.solution_1(); }
+  groupByHeight () { return this.solution_1(...arguments); }
 
   solution_1 () {
     const [_, memo] = this.getHeightsOfNodes();

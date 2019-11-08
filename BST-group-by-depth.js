@@ -39,7 +39,7 @@ class BST {
   }
 
   // SWITCHING BETWEEN SOLUTIONS:
-  groupByDepth () { return this.solution_1(); }
+  groupByDepth () { return this.solution_1(...arguments); }
 
   solution_1 () {
 

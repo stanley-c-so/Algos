@@ -31,7 +31,7 @@ class BST {
   }
 
   // SWITCHING BETWEEN SOLUTIONS:
-  inOrderSuccessor () { return this.solution_1(); }
+  inOrderSuccessor () { return this.solution_1(...arguments); }
 
   solution_1 (predecessor = this) {             // if writing this out as a separate function, there would be a "root" argument before "predecessor"...
     let currentNode = this;                     // ...and this line would be `let currentNode = root;`
