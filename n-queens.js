@@ -68,7 +68,7 @@ function solution_1 (n) {
   
   // UTILITY FUNCTIONS: ADD AND REMOVE QUEEN
   const _setValueAt = (rank, file, value) => {
-    board[rank - 1] = board[rank - 1].slice(0, file - 1) + value + board[rank - 1].slice(file);
+    board[rank - 1] = board[rank - 1].slice(0, file - 1) + value + board[rank - 1].slice(file);     // this is the only place in the code where rank and file need to be offset
   }
   
   const _addQueenAt = (rank, file) => {
