@@ -23,6 +23,8 @@
 
 // Explanation: There exist two distinct solutions to the 4-queens puzzle as shown above.
 
+// i found a good reference table of n vs. number of solutions at the bottom of: http://www.ic-net.or.jp/home/takaken/e/queen/
+
 // SWITCHING BETWEEN SOLUTIONS:
 const solveNQueens = solution_1;
 
