@@ -58,8 +58,10 @@ class BST {
   kthSmallest (k) { return this.solution_2(...arguments); }
 
   solution_1 (k) {             // if writing this out as a separate function, there would be a "root" argument as well. here, we can just reference 'this'
-    // SOLUTION 1 [O(???) time, O(???) space]:
-    //
+    // SOLUTION 1 [O(n) time, O(n)? space]:
+    // in this solution, we collect into an array the values of all nodes via recursive in-order traversal, and then return the kth element from the array. the recursion is done
+    // in the helper function, which returns an empty array in the base case (where root node does not exist), and merges the array from recursed call at root.left, root.value,
+    // and recursed call at root.right.
 
     // HELPER FUNCTION
     const helper = root => root ? [...helper(root.left), root.value, ...helper(root.right)] : [];
@@ -69,20 +71,28 @@ class BST {
   }
 
   solution_2 (k) {             // if writing this out as a separate function, there would be a "root" argument as well. here, we can just reference 'this'
-    // SOLUTION 2 [O(???) time, O(???) space]:
-    //
+    // SOLUTION 2 [O(n) time, O(n) space]:
+    // in this iterative solution, we do not need to burden the call stack. the key difference is that as soon as the kth smallest element has been found, we can end our traversal
+    // immediately. i'm not entirely sure what the complexities would be in the average case (i suspect log(n)) but in the worst case it would be n (if given a degenerate tree). the
+    // way the iterative solution works is to use a stack to keep track of ancestor nodes. we initialize `root` to the actual root of the initial tree - think of `root` as
+    // `currentNode` if it makes it less confusing. next, we keep a main loop going forever (the only way to break out is by finding and returning the kth node). within that loop,
+    // note the in-order traversal pattern of LEFT-SELF-RIGHT. LEFT: we run another while loop as long as `root` (or currentNode) is a valid node. we push that node into our stack
+    // and reset `root` (or currentNode) to the left child. eventually, when we can no longer run down the left branches (i.e. we hit null), the inner while loop will exit. SELF:
+    // we then reset `root` (or currentNode) to whatever gets popped out of the stack. this means we have successfully found the next in-order node, so we can decrement k to denote
+    // that we are one step closer to finding the kth node. indeed, after we decrement, check if k === 0 and if so, we have found the kth node so return the node's value. otherwise,
+    // RIGHT: reset `root` (or currentNode) now to the right child. this is the end of the outer while loop - we repeat the process going forward.
 
     let root = this;          // this line is needed because there is no "root" parameter. otherwise, root would already be defined
-    const stack = [];
-    while (true) {
-      while (root) {
-        stack.push(root);
-        root = root.left;
+    const ancestorStack = [];           // think of stack as holding all ancestors of the current node
+    while (true) {                      // we can run this loop forever since we will return the kth smallest node as soon as we find it
+      while (root) {                      // LEFT: this inner while loop is for running as far down left as we can
+        ancestorStack.push(root);         // whenever a node exists, push it into ancestorStack
+        root = root.left;                 // attempt to go farther down to the left
       }
-      root = stack.pop();
-      k--;
-      if (k === 0) return root.value;
-      root = root.right;
+      root = ancestorStack.pop();         // SELF: when root === null, we have gone as far down left as we can. therefore, reset root to whatever is popped out of ancestorStack
+      k--;                                // we are now staring at the next in-order node. decrement k to indicate that we have found the next node.
+      if (k === 0) return root.value;     // if k is now 0, then we have found the kth smallest node, so return its value!
+      root = root.right;                  // RIGHT: reset root to the right child now, and repeat the entire process
     }
   }
 
@@ -106,6 +116,45 @@ input = {
     .insert(4)
     .insert(6)
     .insert(7),
+  k: 5,
+};
+expected = 6;
+test(func.bind(input.BST), {k: input.k}, expected, testNum, lowestTest, highestTest);
+
+// Test case 2
+input = {
+  BST: new BST(2)
+    .insert(3)
+    .insert(4)
+    .insert(5)
+    .insert(6)
+    .insert(7),
+  k: 5,
+};
+expected = 6;
+test(func.bind(input.BST), {k: input.k}, expected, testNum, lowestTest, highestTest);
+
+// Test case 3
+input = {
+  BST: new BST(7)
+    .insert(6)
+    .insert(5)
+    .insert(4)
+    .insert(3)
+    .insert(2),
+  k: 5,
+};
+expected = 6;
+test(func.bind(input.BST), {k: input.k}, expected, testNum, lowestTest, highestTest);
+
+// Test case 4
+input = {
+  BST: new BST(7)
+    .insert(6)
+    .insert(5)
+    .insert(4)
+    .insert(3)
+    .insert(2),
   k: 5,
 };
 expected = 6;
