@@ -28,8 +28,31 @@ const solveNQueens = solution_1;
 
 function solution_1 (n) {
 
-  // SOLUTION 1 [O(?) time, O(?) space]:
-  // description
+  // SOLUTION 1 [O(n!) time, O(n!) space]:
+  // first, a few initial remarks: the solution uses 4 sets for quickly checking for queen conflicts. every time a valid position is found for a queen to be placed on the board,
+  // we set its rank and file to be occupied. moreover, we set its 2 diagonals to be occupied - note that every position along a given "forward" diagonal has the same (rank - file),
+  // while every position along a given "backward" diagonal has the same (rank + file), so we can use these values in our sets to check if a particular diagonal is occupied. next,
+  // the solution uses certain utility functions to stay DRY: _setValueAt, _addQueenAt, and _removeQueenFrom, which directly manipulate our board object, and make the necessary
+  // additions/removals from our 4 aforementioned sets.
+  //
+  // quick note: for my sanity, i have decided to count ranks and files from 1..n instead of 0..n-1. therefore, all references to ranks and files (including the sets and for loops)
+  // will be in this form. the only exception is within the _setValueAt method which directly interfaces with the board object (and its component strings), and therefore references
+  // therein will be offset by 1.
+  //
+  // the main function merely iterates through all possible ranks along file 1, since any solution must have exactly one queen in each rank, file, and diagonal. the recursive helper
+  // function, `analyze`, will take care of iteration along further files until it gets to the end. note that we need only invoke the analyze helper, because it will not return
+  // anything - a design choice based on the fact that the output needs to contain all solutions, so we can push valid solutions into the output array when one is found, or do nothing
+  // if we reach a dead end - and in either case, simply return. in other words, the helper function does not need to evaluate into anything - we don't need a `true` or `false`.
+  //
+  // the function builds out the board from left to right, top to bottom. the helper function attempts to analyze solutions that begin with placing a queen at a given position, and
+  // attempting to place further queens to the right, all the way to the end; if a dead end is found at the current position, attempt the next position below (the next rank, along the
+  // same file). a more detailed description: first we look at the "base case negative". for the given position, if the given rank, file, forward diagonal, or backward diagonal is
+  // already occupied, then we cannot place a queen here, so return (we don't even need to set the queen down). otherwise, the position IS valid, so now we place the queen (by using
+  // our handy _addQueenAt function). now, we check if we have reached a "base case positive" (if the queen we just set down is the final one - in other words, if we are at the final
+  // file). if so, a solution has been found, so we make a shallow copy of the board state, and push it into the output array, before also removing the queen via _removeQueenFrom to
+  // undo the last move (as we still have to look for more solutions). if we are NOT at the final file, then we are in the recursive case. having found a valid queen position, we
+  // now need to recurse along the next file, for all ranks. to do this, we run a for loop (for nextRank from 1..n), and inside, we recurse for (nextRank, file + 1). finally, after
+  // the for loop, we have now reached a dead end (this happens when during the "unraveling" process as we backtrack). therefore, we need to remove the current queen via _removeQueenFrom.
 
   // INITIALIZE SETS FOR QUICKLY CHECKING FOR QUEEN CONFLICTS
   const occupiedRanks = new Set();
@@ -80,14 +103,14 @@ function solution_1 (n) {
     
     // BASE CASE POSITIVE
     if (file === n) {
-      output.push([...board]);
-      _removeQueenFrom(rank, file);            // don't forget to remove the final queen to undo most last move
+      output.push([...board]);                            // IMPORTANT: push a SHALLOW COPY of the board state into the output array
+      _removeQueenFrom(rank, file);                       // don't forget to remove the final queen to undo most last move
       return;
     };
     
     // RECURSIVE CASE: ANALYZE NEXT FILE
     for (let nextRank = 1; nextRank <= n; nextRank++) {
-      if (Math.abs(nextRank - rank) > 1) {    // micro-optimization: no need to check same or adjacent ranks in the next file
+      if (Math.abs(nextRank - rank) > 1) {                // micro-optimization: no need to check same or adjacent ranks in the next file
         analyze(nextRank, file + 1);
       }
     }
@@ -119,16 +142,30 @@ input = {
   n: 0
 };
 expected = [];
-test(sortedFunc, input, expected, testNum, lowestTest, highestTest);    // note: uses sortedFunc instead of func
+test(sortedFunc, input, expected.sort(), testNum, lowestTest, highestTest);   // note: uses sortedFunc instead of func
 
 // Test case 2
 input = {
   n: 1,
 };
 expected = [['Q']];
-test(sortedFunc, input, expected, testNum, lowestTest, highestTest);    // note: uses sortedFunc instead of func
+test(sortedFunc, input, expected.sort(), testNum, lowestTest, highestTest);   // note: uses sortedFunc instead of func
 
 // Test case 3
+input = {
+  n: 2
+};
+expected = [];
+test(sortedFunc, input, expected.sort(), testNum, lowestTest, highestTest);   // note: uses sortedFunc instead of func
+
+// Test case 4
+input = {
+  n: 3
+};
+expected = [];
+test(sortedFunc, input, expected.sort(), testNum, lowestTest, highestTest);   // note: uses sortedFunc instead of func
+
+// Test case 5
 input = {
   n: 4,
 };
@@ -137,13 +174,53 @@ expected = [
     '..Q.',
     'Q...',
     '...Q',
-    '.Q..'
+    '.Q..',
   ],
   [
     '.Q..',
     '...Q',
     'Q...',
-    '..Q.'
+    '..Q.',
   ],
 ];
-test(sortedFunc, input, expected, testNum, lowestTest, highestTest);    // note: uses sortedFunc instead of func
+test(sortedFunc, input, expected.sort(), testNum, lowestTest, highestTest);   // note: uses sortedFunc instead of func
+
+// Test case 6
+input = {
+  n: 6,
+};
+expected = [
+  [
+    '...Q..',
+    'Q.....',
+    '....Q.',
+    '.Q....',
+    '.....Q',
+    '..Q...',
+  ],
+  [
+    '....Q.',
+    '..Q...',
+    'Q.....',
+    '.....Q',
+    '...Q..',
+    '.Q....',
+  ],
+  [
+    '.Q....',
+    '...Q..',
+    '.....Q',
+    'Q.....',
+    '..Q...',
+    '....Q.',
+  ],
+  [
+    '..Q...',
+    '.....Q',
+    '.Q....',
+    '....Q.',
+    'Q.....',
+    '...Q..',
+  ],
+];
+test(sortedFunc, input, expected.sort(), testNum, lowestTest, highestTest);   // note: uses sortedFunc instead of func
