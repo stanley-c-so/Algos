@@ -96,9 +96,7 @@ function solution_1 (n) {
       || occupiedFiles.has(file)
       || occupiedForwardDiagonals.has(rank - file)
       || occupiedBackwardDiagonals.has(rank + file)
-    ) {
-      return;
-    }
+    ) return;
     
     // VALID SPOT (SO FAR): ONLY THEN DO WE ADD THE QUEEN
     _addQueenAt(rank, file);
