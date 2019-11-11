@@ -109,26 +109,30 @@ class MinHeap {
     return this;    // for chaining
   }
   popMin () {
-    // FIRST, SHIFT OFF THE TOP ELEMENT AND SAVE IT, AND THEN REPLACE WITH LAST ELEMENT
-    const poppedMin = this.queue.shift();                             // can't simply peek and then reassign this.queue[0] = this.queue.pop()...
-    const lastElement = this.queue.pop();                             // ...if this.queue only has one element (it will never get popped off)
-    if (lastElement !== undefined) this.queue.unshift(lastElement);
+    // EDGE CASES: 0- OR 1-LENGTH HEAP
+    if (!this.queue.length) return undefined;
+    if (this.queue.length === 1) return this.queue.pop();       // if only one node, just pop it off the queue and return
+    
+    // FIRST, SAVE THE TOP ELEMENT AND THEN REPLACE IT WITH LAST ELEMENT (AFTER POPPING IT OFF)
+    const poppedMin = this.peek();                              // use .peek() to save the top element inside poppedMin, to be returned later
+    this.queue[0] = this.queue.pop();                           // replace top of heap with node popped off from end of queue
+
     // NEXT, 'HEAPIFY DOWN' ('push down' the first element in queue until heap is proper)
     let currentNodeIdx = 0;
     let [left, right] = this._childrenIndices(currentNodeIdx);
-    while (left < this.queue.length) {
+    while (left < this.queue.length) {                          // while left child exists...
       let smallestChildIdx = right < this.queue.length && this.queue[right].priority < this.queue[left].priority
-        ? right
-        : left;
-      if (this.queue[smallestChildIdx].priority < this.queue[currentNodeIdx].priority) {
-        this._swap(currentNodeIdx, smallestChildIdx);
-        currentNodeIdx = smallestChildIdx;
-        [left, right] = this._childrenIndices(currentNodeIdx);
+        ? right     // ...smallestChildIdx is right if right child exists AND takes priority over left child...
+        : left;     // ...otherwise, smallestChildIdx is left
+      if (this.queue[smallestChildIdx].priority < this.queue[currentNodeIdx].priority) {    // see if smallest child is smaller than parent
+        this._swap(currentNodeIdx, smallestChildIdx);           // swap parent and smaller child
+        currentNodeIdx = smallestChildIdx;                      // update currentNodeIdx
+        [left, right] = this._childrenIndices(currentNodeIdx);  // update left and right
       } else {
-        break;
+        break;      // if smaller child is not smaller than parent, break out of heapify down
       }
     }
-    return poppedMin;
+    return poppedMin;   // finally, return the stored top element from the beginning
   }
 }
 
