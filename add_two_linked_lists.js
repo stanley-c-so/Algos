@@ -20,9 +20,14 @@ class ListNode {
     this.val = val;
     this.next = null;
   }
-  insert (val) {
-    this.next = new ListNode(val);
-    return this.next;
+  insert (...vals) {
+    let currentNode = this;
+    for (const val of vals) {
+      const nextNode = new ListNode(val);
+      currentNode.next = nextNode;
+      currentNode = nextNode;
+    }
+    return this;
   }
 }
 
@@ -95,14 +100,10 @@ const highestTest = 0 || Infinity;
 
 // Test case 1
 input = {
-  l1: new ListNode(2)
-    .insert(4)
-    .insert(3),
-  l2: new ListNode(5)
-    .insert(6)
-    .insert(4),
+  l1: new ListNode(2).insert(4, 3),
+  l2: new ListNode(5).insert(6, 4),
 };
-expected = new ListNode(7).insert(0).insert(8);
+expected = new ListNode(7).insert(0, 8);
 test(func, input, expected, testNum, lowestTest, highestTest);
 
 // Test case 2
@@ -124,9 +125,7 @@ test(func, input, expected, testNum, lowestTest, highestTest);
 // Test case 4
 input = {
   l1: new ListNode(1),
-  l2: new ListNode(9)
-    .insert(9)
-    .insert(9),
+  l2: new ListNode(9).insert(9, 9),
 };
-expected = new ListNode(0).insert(0).insert(0).insert(1);
+expected = new ListNode(0).insert(0, 0, 1);
 test(func, input, expected, testNum, lowestTest, highestTest);
