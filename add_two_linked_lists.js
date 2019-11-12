@@ -22,7 +22,7 @@ class ListNode {
   }
   insert (val) {
     this.next = new ListNode(val);
-    return this;
+    return this.next;
   }
 }
 
