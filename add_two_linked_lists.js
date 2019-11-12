@@ -16,9 +16,10 @@
 const addTwoLinkedLists = solution_2;
 
 class ListNode {
-  constructor (val) {
+  constructor (val, ...extraVals) {
     this.val = val;
     this.next = null;
+    if (extraVals.length) this.insert(...extraVals);
   }
   insert (...vals) {
     let currentNode = this;
@@ -100,10 +101,10 @@ const highestTest = 0 || Infinity;
 
 // Test case 1
 input = {
-  l1: new ListNode(2).insert(4, 3),
-  l2: new ListNode(5).insert(6, 4),
+  l1: new ListNode(2, 4, 3),
+  l2: new ListNode(5, 6, 4),
 };
-expected = new ListNode(7).insert(0, 8);
+expected = new ListNode(7, 0, 8);
 test(func, input, expected, testNum, lowestTest, highestTest);
 
 // Test case 2
@@ -111,7 +112,7 @@ input = {
   l1: new ListNode(5),
   l2: new ListNode(5),
 };
-expected = new ListNode(0).insert(1);
+expected = new ListNode(0, 1);
 test(func, input, expected, testNum, lowestTest, highestTest);
 
 // Test case 3
@@ -125,7 +126,7 @@ test(func, input, expected, testNum, lowestTest, highestTest);
 // Test case 4
 input = {
   l1: new ListNode(1),
-  l2: new ListNode(9).insert(9, 9),
+  l2: new ListNode(9, 9, 9),
 };
-expected = new ListNode(0).insert(0, 0, 1);
+expected = new ListNode(0, 0, 0, 1);
 test(func, input, expected, testNum, lowestTest, highestTest);
