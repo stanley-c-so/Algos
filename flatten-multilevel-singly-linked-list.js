@@ -20,7 +20,7 @@
 // Note: I wrote the ListNode class for this exercise.
 
 // SWITCHING BETWEEN SOLUTIONS:
-const flatten = solution_1;
+const flatten = solution_2;
 
 class ListNode {
   constructor (val, ...extraVals) {
@@ -51,7 +51,7 @@ class ListNode {
 
 function solution_1 (head) {
 
-  // SOLUTION 1 [O(n) time, O(1) space]:
+  // SOLUTION 1 [O(n^2) time (if the entire list is just a vertical line of children, then every time you recurse you have to rerun through current node's descendants), O(1) space]:
   // this is basically just a simple traversal problem. first, set up the edge case for a null input. otherwise, initialize currentNode to head, and run a loop while currentNode
   // is not null. at each currentNode, save a reference to whatever is its .next. then, check if a child exists. if it does, recurse to flatten that child, and set currentNode.next
   // to the flattened child. then, keep traversing next until you hit the final node before null (note that even if the child itself had children, because you flattened it recursively,
@@ -95,6 +95,44 @@ function solution_1 (head) {
   
   // RETURN head
   return head;
+}
+
+function solution_2 (head) {
+
+  // SOLUTION 2 [O(n) time, O(1) space]:
+  // to avoid the O(n^2) problem in the above solution, we need to use a helper function that returns both the head as well as the finalNode (this is either the final sibling node
+  // of the head, OR if the final sibling had any children, then whatever is the final node at that level). the main function, then, only needs to invoke the helper with the original
+  // head and return the 0 index.
+  // NOTE: I DID NOT BOTHER TO MAKE THIS SOLUTION SUPPORT DOUBLY LINKED LISTS. BUT IF YOU WANTED TO, YOU COULD JUST IMPLEMENT [OPTION B] FROM ABOVE TO DO IT SIMPLY
+
+  // EDGE CASE: NO NODE
+  if (!head) return null;
+
+  // RECURSIVE HELPER FUNCTION
+  const helper = head => {
+
+    // INITIALIZATIONS
+    let finalNode;                                                      // final sibling node of the current head, or if that final sibling had any children, the final node at that level
+    let currentNode = head;
+
+    // ITERATE THROUGH THE LINKED LIST
+    while (currentNode) {
+      const originalNext = currentNode.next;                            // save a reference to the next node (or null), in case there is a child at this node
+      if (currentNode.child) {                                          // if there is a child at this node...
+        const [originalChild, childTail] = helper(currentNode.child);     // ...recurse helper on the child to flatten it
+        currentNode.child = null;                                         // don't forget to set the .child property to null
+        currentNode.next = originalChild;                                 // connect current node to originalChild
+        childTail.next = originalNext;                                    // connect childTail to originalNext (THIS IS THE WHOLE POINT OF THE HELPER - don't need to run through children)
+        if (!originalNext) finalNode = childTail;                         // IMPORTANT: if originalNext was null, then set finalNode to childTail
+      } else {
+        finalNode = currentNode;                                        // if no child at this node, set finalNode to currentNode (this will surely catch final sibling if childless).
+      }
+      currentNode = originalNext;                                       // advance currentNode to originalNext
+    }
+    return [head, finalNode];                                           // at the end of the while loop, return both the head and the finalNode (finalNode helps connect children back up)
+  };
+
+  return helper(head)[0];                                               // return only the original head, so invoke the helper and return index 0
 }
 
 // TEST CASES
