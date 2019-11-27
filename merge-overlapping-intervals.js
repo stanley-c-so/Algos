@@ -60,7 +60,7 @@ function solution_2(intervals) {
   // RECENT MERGED INTERVAL TO THE GREATER OF EITHER ITSELF OR THE LAST NUMBER OF currentInterval. (2) OTHERWISE, EITHER output IS
   // EMPTY, OR currentInterval DOES NOT OVERLAP WITH MOST RECENT MERGED INTERVAL - SO PUSH currentInterval INTO output.
   return intervals.reduce((output, currentInterval) => {
-    if (output.length && currentInterval[0] <= output[output.length -1][1]) {
+    if (output.length && currentInterval[0] <= output[output.length - 1][1]) {
       output[output.length - 1][1] = Math.max(output[output.length - 1][1], currentInterval[1]);
     } else {
       output.push(currentInterval);
