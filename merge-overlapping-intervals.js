@@ -82,6 +82,13 @@ const highestTest = 0 || Infinity;
 
 // Test case 1
 input = {
+  intervals: [],
+};
+expected = [];
+test(func, input, expected, testNum, lowestTest, highestTest);
+
+// Test case 2
+input = {
   intervals: [
     [1, 3],
     [5, 8],
@@ -96,7 +103,7 @@ expected = [
 ];
 test(func, input, expected, testNum, lowestTest, highestTest);
 
-// Test case 2
+// Test case 3
 input = {
   intervals: [
     [7, 9],
