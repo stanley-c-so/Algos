@@ -109,6 +109,7 @@ const testNum = [1];
 let input, expected;
 const func = numberToWords;
 const sortedFunc = (...args) => func(...args).sort();                   // used when the order of the output does not matter
+const modFunc = (...args) => func(...args) % 1000000007;                // used when the output is very large
 const lowestTest = 0 || 0;
 const highestTest = 0 || Infinity;
 
