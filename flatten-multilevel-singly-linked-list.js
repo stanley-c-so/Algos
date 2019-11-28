@@ -103,7 +103,6 @@ function solution_2 (head) {
   // to avoid the O(n^2) problem in the above solution, we need to use a helper function that returns both the head as well as the finalNode (this is either the final sibling node
   // of the head, OR if the final sibling had any children, then whatever is the final node at that level). the main function, then, only needs to invoke the helper with the original
   // head and return the 0 index.
-  // NOTE: I DID NOT BOTHER TO MAKE THIS SOLUTION SUPPORT DOUBLY LINKED LISTS. BUT IF YOU WANTED TO, YOU COULD JUST IMPLEMENT [OPTION B] FROM ABOVE TO DO IT SIMPLY
 
   // EDGE CASE: NO NODE
   if (!head) return null;
@@ -118,21 +117,38 @@ function solution_2 (head) {
     // ITERATE THROUGH THE LINKED LIST
     while (currentNode) {
       const originalNext = currentNode.next;                            // save a reference to the next node (or null), in case there is a child at this node
+      finalNode = currentNode;
       if (currentNode.child) {                                          // if there is a child at this node...
-        const [originalChild, childTail] = helper(currentNode.child);     // ...recurse helper on the child to flatten it
+        const [childHead, childTail] = helper(currentNode.child);       // ...recurse helper on the child to flatten it
         currentNode.child = null;                                         // don't forget to set the .child property to null
-        currentNode.next = originalChild;                                 // connect current node to originalChild
+        currentNode.next = childHead;                                     // connect current node to childHead
+        // childHead.prev = currentNode;                                     // *** [OPTION A]: connect childHead back to currentNode
         childTail.next = originalNext;                                    // connect childTail to originalNext (THIS IS THE WHOLE POINT OF THE HELPER - don't need to run through children)
-        if (!originalNext) finalNode = childTail;                         // IMPORTANT: if originalNext was null, then set finalNode to childTail
-      } else {
-        finalNode = currentNode;                                        // if no child at this node, set finalNode to currentNode (this will surely catch final sibling if childless).
+        // if (originalNext) originalNext.prev = childTail;                  // *** [OPTION A]: if originalNext is a node, connect it back to childTail
+        finalNode = childTail;                                            // reassign finalNode to childTail in case there is no node after this!
       }
       currentNode = originalNext;                                       // advance currentNode to originalNext
     }
     return [head, finalNode];                                           // at the end of the while loop, return both the head and the finalNode (finalNode helps connect children back up)
   };
 
+  // *** [OPTION A] INVOKE HELPER AND RETURN 0 INDEX FOR THE HEAD IF YOU FIGURED OUT OPTION A ABOVE, OR IF THE EXERCISE IS ONLY FOR SINGLY LINKED LISTS
   return helper(head)[0];                                               // return only the original head, so invoke the helper and return index 0
+
+  // // *** [OPTION B] INVOKE HELPER (NO NEED TO SAVE ITS RETURN VALUE) TO FLATTEN THE LIST
+  // helper(head);
+
+  // // NOW THE LINKED LIST IS VALID IN ONE DIRECTION. RUN THROUGH IT AGAIN AND UNTANGLE THE .prev
+  // let prev = null;
+  // let currentNode = head;
+  // while (currentNode) {
+  //   currentNode.prev = prev;
+  //   prev = currentNode;
+  //   currentNode = currentNode.next;
+  // }
+
+  // // FINALLY, JUST RETURN head
+  // return head;
 }
 
 // TEST CASES
