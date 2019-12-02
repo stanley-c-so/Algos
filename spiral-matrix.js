@@ -23,11 +23,11 @@
 // Output: [1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
 
 // SWITCHING BETWEEN SOLUTIONS:
-const spiralOrder = solution_3;
+const spiralOrder = solution_4;
 
 function solution_1 (matrix, dir, TL, TR, BR, BL) {
 
-  // SOLUTION 1 [O(n*m) time (n and m are the dimensions of the matrix), O(n) space]:
+  // SOLUTION 1 [O(n*m) time (n and m are the dimensions of the matrix), O(n) space (the new output alone will take up O(n) space)]:
   // the variables TL, TR, BR, and BL mark the coordinates of the area of the matrix currently being considered, and the variable dir represents the direction.
   // starting values put TL, TR, BR, and BL at the outer corners of the matrix, and dir as 'R'. based on the direction, run along the corresponding edge of the
   // matrix, gathering up all values along the way. then, strip off the edge that was just processed, and start at the new corner, and change directions. note
@@ -96,7 +96,7 @@ function solution_1 (matrix, dir, TL, TR, BR, BL) {
 
 function solution_2 (matrix) {
 
-  // SOLUTION 2 [O(n*m) time (n and m are the dimensions of the matrix), O(n) space]:
+  // SOLUTION 2 [O(n*m) time (n and m are the dimensions of the matrix), O(n) space (the new output alone will take up O(n) space)]:
   // start at the top left of the matrix, running to the right, and track your current coordinates. maintain a while loop as long as the output array has fewer than
   // n * m elements. push the current coordinates into the output array, and reassign the value to null. keep running in the current direction until you either run
   // up against the edge of the matrix, or you run into a visited element (i.e. it is null). the advantage of this approach is that it is a little easier to code
@@ -156,6 +156,13 @@ function solution_2 (matrix) {
 }
 
 function solution_3 (matrix) {
+
+  // SOLUTION 3 [O(n*m) time (n and m are the dimensions of the matrix), O(n) space (the new output alone will take up O(n) space)]:
+  // start at the top left of the matrix, running to the right, and track your current coordinates. maintain a while loop as long as the output array has fewer than
+  // n * m elements. push the current coordinates into the output array, and reassign the value to null. keep running in the current direction until you either run
+  // up against the edge of the matrix, or you run into a visited element (i.e. it is null). the advantage of this approach is that it is a little easier to code
+  // out and does not use recursion, but the disadvantage is that the data gets lost (unless you clone it first).
+
   // EDGE CASE - NO ROWS OR NO COLUMNS
   if (!matrix.length || !matrix[0].length) return [];
     
@@ -169,7 +176,7 @@ function solution_3 (matrix) {
   // ITERATE WHILE CORNERS CAPTURE SOME AREA
   while (topLeft[1] <= topRight[1] && topLeft[0] <= botLeft[0]) {
     
-    // SHORT CIRCUIT IF ONLY ONE ROW OR ONE COLUMN REMAINS
+    // SHORT CIRCUIT IF ONLY ONE ROW OR ONE COLUMN REMAINS (compare topLeft to topRight and botLeft)
     if (topLeft[0] === botLeft[0]) {                                // one row
       return output.concat(
         matrix[topLeft[0]].slice(topLeft[1], topRight[1] + 1)       // slice out the unprocessed part from the remaining row
@@ -200,6 +207,51 @@ function solution_3 (matrix) {
         
     botRight[0]--;
     botRight[1]--;
+  }
+
+  return output;  
+}
+
+function solution_4 (matrix) {
+
+  // SOLUTION 4 [O(n*m) time (n and m are the dimensions of the matrix), O(n) space (the new output alone will take up O(n) space; the additional seen mask is also O(n))]:
+  // this is probably the cleanest code solution. note the use of a `seen` mask with default values of false that get set to true when a position is visited. we start at the
+  // top left, as usual, and we iterate for as many iterations as there are numbers in the matrix. each time, we push the current position into the output and mark that position
+  // as "seen" in the seen matrix. in terms of figuring out where to go next, note the rowVector and colVector arrays - these hold the deltas for where to go next depending on
+  // the current direction, which corresponds to the index of those arrays. the default direction is 0 (right). at the end of every iteration we simply calculate the temporary
+  // coordinates if we keep going in the current direction (by adding the vectors), and then we check if the result is (i) in bounds, and (ii) a place we have not visited yet.
+  // if all of those are true, update the current row and col to the tempRow and tempCol. else, simply bump up to the next dir value, and go in that direction instead. there
+  // should be no weird edge cases using this method, other than empty input :)
+
+  // EDGE CASE - NO ROWS OR NO COLUMNS
+  if (!matrix.length || !matrix[0].length) return [];
+
+  // INITIALIZATIONS
+  const h = matrix.length;
+  const w = matrix[0].length;
+  const output = [];
+  const seen = Array.from({ length: h }, () =>    // this creates an n*m array filled with default value false
+    Array.from({ length: w }, () => false)          // note syntax for making new array: Array.from({length: n}, () => <value>) makes a new n-sized array populated with <value>
+  );
+  const rowVector = [0, 1, 0, -1];                // dir 0 = right, 1 = down, 2 = left, 3 = up. these correspond to index values in these vector arrays
+  const colVector = [1, 0, -1, 0];
+
+  let row = 0;
+  let col = 0;
+  let dir = 0;                                    // default dir is 0 (right)
+  for (let i = 0; i < h * w; i++) {               // # of iterations = # of squares in matrix
+    output.push(matrix[row][col]);
+    seen[row][col] = true;
+    const tempRow = row + rowVector[dir];         // temp coordinates are new coordinates if you keep running in the current direction. we will check validity after this
+    const tempCol = col + colVector[dir];
+    if (tempRow >= 0 && tempRow < h && tempCol >= 0 && tempCol < w && !seen[tempRow][tempCol]) {    // if temp coordinates are in bounds and unvisited...
+      row = tempRow;                                                                                  // ...then go to them
+      col = tempCol;
+    } else {
+      dir = (dir + 1) % 4;                                                                          // else, switch directions...
+      row = row + rowVector[dir];                                                                     // ...and go in the new direction
+      col = col + colVector[dir];
+    }
   }
 
   return output;  
