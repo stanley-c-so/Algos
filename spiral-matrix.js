@@ -214,7 +214,7 @@ function solution_3 (matrix) {
 
 function solution_4 (matrix) {
 
-  // SOLUTION 4 [O(n*m) time (n and m are the dimensions of the matrix), O(n) space (the new output alone will take up O(n) space; the additional seen mask is also O(n))]:
+  // SOLUTION 4 [O(n*m) time (n and m are the dimensions of the matrix), O(n*m) space (the new output alone will take up O(n*m) space; the additional seen mask is also O(n*m))]:
   // this is probably the cleanest code solution. note the use of a `seen` mask with default values of false that get set to true when a position is visited. we start at the
   // top left, as usual, and we iterate for as many iterations as there are numbers in the matrix. each time, we push the current position into the output and mark that position
   // as "seen" in the seen matrix. in terms of figuring out where to go next, note the rowVector and colVector arrays - these hold the deltas for where to go next depending on
