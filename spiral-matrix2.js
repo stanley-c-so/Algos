@@ -13,7 +13,7 @@
 // ]
 
 // SWITCHING BETWEEN SOLUTIONS:
-const generateMatrix = solution_1;
+const generateMatrix = solution_2;
 
 function solution_1 (n) {
 
@@ -68,6 +68,47 @@ function solution_1 (n) {
         break;
     }
   }
+  return matrix;
+}
+
+function solution_2 (n) {
+
+  // SOLUTION 2 [O(n^2) time, O(n) space (the new output alone will take up O(n^2) space; the additional seen mask is also O(n^2))]:
+  // this is probably the cleanest code solution. note the syntax used to easily create a 2-d array without running into shallow copy issues. we start at the top left, as usual,
+  // and we iterate for as many iterations as there are numbers in n^2. each time, we push the current value of i + 1 as into matrix. in terms of figuring out where to go next,
+  // note the rowVector and colVector arrays - these hold the deltas for where to go next depending on the current direction, which corresponds to the index of those arrays. the
+  // default direction is 0 (right). at the end of every iteration we simply calculate the temporary coordinates if we keep going in the current direction (by adding the vectors),
+  // and then we check if the result is (i) in bounds, and (ii) a null value (indicating that it has not been visited yet). if all of those are true, update the current row and
+  // col to the tempRow and tempCol. else, simply bump up to the next dir value, and go in that direction instead. there should be no weird edge cases using this method, other than
+  // empty input :)
+
+  // EDGE CASE - NO ROWS OR NO COLUMNS
+  if (!n) return [];
+
+  // INITIALIZATIONS
+  const matrix = Array.from({ length: n }, () =>  // this creates an n^2 array filled with default value null
+    Array.from({ length: n }, () => null)           // note syntax for making new array: Array.from({length: n}, () => <value>) makes a new n-sized array populated with <value>
+  );
+  const rowVector = [0, 1, 0, -1];                // dir 0 = right, 1 = down, 2 = left, 3 = up. these correspond to index values in these vector arrays
+  const colVector = [1, 0, -1, 0];
+
+  let row = 0;
+  let col = 0;
+  let dir = 0;                                    // default dir is 0 (right)
+  for (let i = 0; i < n*n; i++) {                 // # of iterations = # of squares in matrix
+    matrix[row][col] = i + 1;
+    const tempRow = row + rowVector[dir];         // temp coordinates are new coordinates if you keep running in the current direction. we will check validity after this
+    const tempCol = col + colVector[dir];
+    if (tempRow >= 0 && tempRow < n && tempCol >= 0 && tempCol < n && !matrix[tempRow][tempCol]) {    // if temp coordinates are in bounds and unvisited...
+      row = tempRow;                                                                                  // ...then go to them
+      col = tempCol;
+    } else {
+      dir = (dir + 1) % 4;                                                                          // else, switch directions...
+      row = row + rowVector[dir];                                                                     // ...and go in the new direction
+      col = col + colVector[dir];
+    }
+  }
+
   return matrix;
 }
 
