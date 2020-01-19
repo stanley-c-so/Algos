@@ -21,6 +21,8 @@ function equals (actual, expected) {
       return true;
     case Set:                                                 // SETS: (1) spread into array and sort, (2) recurse on sorted arrays
       return equals([...actual].sort(), [...expected].sort());
+    case Boolean:                                             // BOOLEANS: direct comparison
+      return actual === expected;
     case String:                                              // STRINGS: direct comparison
       return actual === expected;
     case Number:                                              // NUMBERS: (1) check whether actual and expected are both NaN, (2) direct comparison
@@ -41,6 +43,14 @@ function equals (actual, expected) {
 module.exports = equals;
 
 if (require.main === module) {      // only console.log these tests if this file is run directly from the command line
+
+  // booleans
+  console.log('BOOLEANS:');
+  console.log('true?', equals(true, true));
+  console.log('true?', equals(false, false));
+  console.log('false?', equals(true, false));
+  console.log('false?', equals(false, true));
+  console.log('');
 
   // numbers
   console.log('NUMBERS:');
