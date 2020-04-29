@@ -97,6 +97,8 @@ class Batch {
     for (let i = 0; i < this.batch.length; i++) {
       if (this.batch[i] !== null) {
         nextBatch.push(...(this.batch[i].insert(values[2 * i] || null, values[2 * i + 1] || null)));
+      } else {
+        nextBatch.push(null, null);
       }
     }
     return lastInsert ? this.root : new Batch (this.root, nextBatch);
