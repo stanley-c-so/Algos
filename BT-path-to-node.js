@@ -96,7 +96,10 @@ class Batch {
     const nextBatch = [];
     for (let i = 0; i < this.batch.length; i++) {
       if (this.batch[i] !== null) {
-        nextBatch.push(...(this.batch[i].insert(values[2 * i] || null, values[2 * i + 1] || null)));
+        nextBatch.push(...(this.batch[i].insert(
+          values[2 * i] === undefined ? null : values[2 * i],
+          values[2 * i + 1] === undefined ? null : values[2 * i + 1],
+        )));
       } else {
         nextBatch.push(null, null);
       }
