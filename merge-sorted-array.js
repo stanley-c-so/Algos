@@ -23,36 +23,38 @@ const merge = solution_1;
 function solution_1 (nums1, m, nums2, n) {
 
   // SOLUTION 1 [O(m + n) time, O(1) space]:
-  // we start by moving the m elements in nums1 to the end of nums1 (like right-justifying it). it is important to do this from right to left, or else we can potentially overwrite
-  // data if nums1 is long and nums2 is short. once that is done, we use 3 pointers: (1) at the beginning of the right-justified data in nums1, (2) at the beginning of nums2, and
-  // (3) at the beginning of nums1 (for writing). we do a for loop with m + n iterations. with each one, we compare the number at the nums1 'read' pointer with the nums2 pointer (or
-  // if one pointer has already gone past the end, then we default to the other one) and we write the appropriate number into nums1 'write' pointer.
+  // to save space (and not have to create a new array), the key to doing this problem is to write from the "end" (i.e. index `m + n - 1` of 
+  // `nums1`) where there is already empty space. we can initialize a `write` pointer at this index. we also initialize read pointers called
+  // `pointer1` and `pointer2` which will iterate through the data portions of `nums1` and `nums2` from back to front. each time we pick the
+  // smaller number and write that into `nums1` from the back.
 
-  const actual_solution = () => {
+  // INITIALIZATIONS
+  let write = m + n - 1;      // the key is to set these all at the back
+  let pointer1 = m - 1;
+  let pointer2 = n - 1;
 
-    // STEP 1: SHIFT EVERYTHING IN nums1 TO THE END, STARTING FROM THE mth POSITION AND GOING RIGHT TO LEFT (TO PREVENT OVERWRITING DATA)
-    for (let i = 0; i < m; i++) {
-      nums1[nums1.length - 1 - i] = nums1[m - 1 - i];
+  // ITERATE `write` POINTER THROUGH `m + n` POSITIONS OF `nums1`, FORM BACK TO FRONT
+  while (write >= 0) {
+    if (
+      pointer2 < 0 ||                                       // choose from `nums1` if `pointer2` is done, OR,
+      pointer1 >= 0 && nums1[pointer1] > nums2[pointer2]    // `pointer1` is NOT done, AND its number is smaller than that of `pointer2`
+    ) {
+      nums1[write] = nums1[pointer1];                       // always write into `nums1`
+      pointer1--;                                           // decrement `pointer1`
+    } else {
+      nums1[write] = nums2[pointer2];                       // always write into `nums1`
+      pointer2--;                                           // decrement `pointer2`
     }
+    write--;                                                // always decrement `write`
+  }
 
-    // STEP 2: SET POINTERS FOR nums1 (read), nums1 (write), AND nums2 (read), ITERATE THROUGH WRITE INDICES AND GRAB NEXT NUMBER FROM EITHER pointer1 OR pointer2
-    let pointer1 = nums1.length - m;
-    let pointer2 = 0;
-    let outputPointer = 0;
-    for (let i = 0; i < m + n; i++) {
-      if (pointer2 === nums2.length || nums1[pointer1] <= nums2[pointer2]) {      // if pointer2 has reached the end OR if pointer1 is pointing at a lower number
-        nums1[outputPointer] = nums1[pointer1];
-        pointer1++;
-      } else {                                                                    // note: if pointer1 has reached the end, then the above if condition will spit out false
-        nums1[outputPointer] = nums2[pointer2];
-        pointer2++;
-      }
-      outputPointer++;
-    }
-  };
-  actual_solution();      // the actual solution should not return anything, but modify nums1 in place. here, we wrap the actual solution with a main function that invokes and returns
-  return nums1;
+  // NO RETURN. WE ARE ONLY MODIFYING `nums1` IN PLACE
 }
+
+const specialTest = (...args) => {
+  merge(...args);                     // since our function won't return anything, we will use `specialTest` to call the function on the input...
+  return args[0];                     // ...and then return `nums1` (the first argument) from the input, which was modified by the function call
+};
 
 // TEST CASES
 
@@ -73,7 +75,7 @@ input = {
   n: 3,
 };
 expected = [1, 2, 2, 3, 5, 6];
-test(func, input, expected, testNum, lowestTest, highestTest);
+test(specialTest, input, expected, testNum, lowestTest, highestTest);
 
 // Test case 2
 input = {
@@ -83,7 +85,7 @@ input = {
   n: 1,
 };
 expected = [1, 2];
-test(func, input, expected, testNum, lowestTest, highestTest);
+test(specialTest, input, expected, testNum, lowestTest, highestTest);
 
 // Test case 3
 input = {
@@ -93,9 +95,9 @@ input = {
   n: 0,
 };
 expected = [1];
-test(func, input, expected, testNum, lowestTest, highestTest);
+test(specialTest, input, expected, testNum, lowestTest, highestTest);
 
-// Test case 3
+// Test case 4
 input = {
   nums1: [1, 1, 1, 0, 0, 0],
   m: 3,
@@ -103,4 +105,4 @@ input = {
   n: 3,
 };
 expected = [1, 1, 1, 2, 2, 2];
-test(func, input, expected, testNum, lowestTest, highestTest);
+test(specialTest, input, expected, testNum, lowestTest, highestTest);
