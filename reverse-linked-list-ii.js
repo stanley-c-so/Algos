@@ -80,11 +80,18 @@ function solution_1 (head, m, n) {
 }
 
 function solution_2 (head, m, n) {
+
+  // SOLUTION 2 [O(L) time, where L is the lengh of the input list, O(1) space]:
+  // this is the same as solution 1, but it abstracts away the part where we reverse the segment that needs to be reversed. we use a helper
+  // `reverse` function that will do this for us once we reach the `m`th node. this is basically like the general solution for reversing
+  // a singly linked list, except (1) it has access to `m`, `n`, and `index` from the main function, and (2) instead of just returning the new
+  // head, this will return three things: (1) `nodeAtM` (which is `head`), (2) `nodeAtN` (which is `prev`), and (3) `nodeAfterReverse` (which
+  // is `node`). these references will help us to set up those final connections after we invoke this helper function.
+
   function reverse (head) {                   // helper function to reverse a singly linked list, with a twist: it returns several things
-    let index = m;                            // we will use `index` to know when to stop (this references `m` from main function)
     let prev = null;
     let node = head;
-    while (index <= n) {                      // we will keep going until `index` surpasses `n` (reference comes from main function)
+    while (index <= n) {                      // we will keep going until `index` surpasses `n` (references come from main function)
       const next = node.next;
       node.next = prev;
       prev = node;
