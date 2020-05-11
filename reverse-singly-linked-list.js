@@ -46,12 +46,12 @@ function solution_1 (head) {
   let prev = null;
   let current = head;
   while (current) {
-    const next = current.next;
-    current.next = prev;
-    prev = current;
-    current = next;
+    const next = current.next;      // need to save a reference to `next` so that `current` can advance at the end of the while loop
+    current.next = prev;            // connect `current` to `prev`
+    prev = current;                 // advance `prev`
+    current = next;                 // advance `current`
   }
-  return prev;
+  return prev;                      // at the end, `current` should be `null`, and `prev` is the original tail (the new head), so return it
 }
 
 function solution_2 (head) {
@@ -64,13 +64,13 @@ function solution_2 (head) {
   // EDGE CASE: NULL INPUT
   if (!head) return null;
 
-  // RECURSIVE HELPER FUNCTION
-  const helper = head => {
-      if (!head.next) return [head, head];                      // BASE CASE
-      const [originalNext, originalTail] = helper(head.next);   // RECURSIVE CASE: destructure the result of recursing on the next node
-      originalNext.next = head;                                 // the next node should connect to the current node
-      head.next = null;                                         // the current node should connect to null (in case this is the original head)
-      return [head, originalTail];                              // return current node and original tail
+  // RECURSIVE HELPER FUNCTION: GIVEN A LIST NODE, IT REVERSES IT AND RETURNS AN ARRAY OF: (1) THE NODE ITSELF, (2) THE ORIGINAL TAIL (NEW HEAD)
+  const helper = node => {
+    if (!node.next) return [node, node];                      // BASE CASE
+    const [originalNext, originalTail] = helper(node.next);   // RECURSIVE CASE: destructure the result of recursing on the next node
+    originalNext.next = node;                                 // the next node should connect to the current node
+    node.next = null;                                         // the current node should connect to null (in case this is the original head)
+    return [node, originalTail];                              // return current node and original tail
   };
 
   return helper(head)[1];   // run head through the helper function. then, ultimately, you only care for the original tail, so return index 1
