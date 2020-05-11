@@ -12,7 +12,7 @@
 // Note: I wrote the ListNode class for this exercise.
 
 // SWITCHING BETWEEN SOLUTIONS:
-const reverseBetween = solution_1;
+const reverseBetween = solution_2;
 
 class ListNode {
   constructor(val, ...extraVals) {
@@ -77,6 +77,40 @@ function solution_1 (head, m, n) {
   // FINAL STEPS
   nodeAtM.next = nodeAfterReverse;            // connect `m`th node to `nodeAfterReverse` (whether node or null)
   return output;                              // return `output`. this will either be `head` if `m !== 1`, or else `n`th node
+}
+
+function solution_2 (head, m, n) {
+  function reverse (head) {                   // helper function to reverse a singly linked list, with a twist: it returns several things
+    let index = m;                            // we will use `index` to know when to stop (this references `m` from main function)
+    let prev = null;
+    let node = head;
+    while (index <= n) {                      // we will keep going until `index` surpasses `n` (reference comes from main function)
+      const next = node.next;
+      node.next = prev;
+      prev = node;
+      node = next;
+      index++;
+    }
+    return [head, prev, node];                // returns references to (1) nodeAtM, (2) nodeAtN, (3) nodeAfterReverse (may be null)
+  }
+  let output = head;
+  let index = 1;                              // we will use `index` to know when we have reached the `m`th node
+  let prev = null;
+  let node = head;
+  while (index < m) {                         // just iterate through the linked list until we reach the `m`th node
+    prev = node;
+    node = node.next;
+    index++;
+  }
+  const nodeBeforeReverse = prev;             // save a reference to the node before the `m`th node (may be null)
+  const [nodeAtM, nodeAtN, nodeAfterReverse] = reverse(node);   // reverse the portion that needs to be reversed, and grab references
+  if (m !== 1) {
+    nodeBeforeReverse.next = nodeAtN;         // as long as `m` is not 1, there will be a `nodeBeforeReverse`, so connect it to `n`th node
+  } else {
+    output = nodeAtN;                         // else, `m` was first node, so we don't need to make a connection, but `output` changes to `n`th node
+  }
+  nodeAtM.next = nodeAfterReverse;            // connect `m`th node to `nodeAfterReverse`
+  return output;                              // return `output` (either original `head`, or `n`th node if `m === 1`)
 }
 
 // TEST CASES
