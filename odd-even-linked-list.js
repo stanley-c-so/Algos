@@ -21,15 +21,20 @@
 
 // Note: I wrote the following class code for SinglyLinkedList
 
-class SinglyLinkedList {
-  constructor(val) {
+class ListNode {
+  constructor (val, ...extraVals) {
     this.val = val;
     this.next = null;
+    if (extraVals.length) this.insert(...extraVals);
   }
-
-  insert(val) {
-    this.next = new SinglyLinkedList(val);
-    return this;    // for chaining
+  insert (...vals) {
+    let currentNode = this;
+    for (const val of vals) {
+      const nextNode = new ListNode(val);
+      currentNode.next = nextNode;
+      currentNode = nextNode;
+    }
+    return this;
   }
 }
 
@@ -62,18 +67,18 @@ function solution_1 (head) {
   
   // ITERATE WHILE ANYTHING EXISTS BEYOND THE CURRENT EVEN NODE
   while (evenPointer.next) {
-    oddPointer.next = evenPointer.next;     // connect current odd node to the node after the current even node
-    oddPointer = evenPointer.next;          // move the odd node pointer to the most recent odd node
-    if (!oddPointer.next) {                 // if the list ends on an odd node...
-      evenPointer.next = null;              // ...the final even node needs be disconnected from the final odd node
-      break;                                // ...and we break
+    oddPointer.next = evenPointer.next;       // connect current odd node to the node after the current even node
+    oddPointer = evenPointer.next;            // move the odd node pointer to the most recent odd node
+    if (!oddPointer.next) {                   // if the next odd node doesn't have a next, then the list ends on an odd node...
+      evenPointer.next = null;                // ...so the final even node needs be disconnected from the final odd node
+    } else {                                  // else, we can keep advancing the even pointer...
+      evenPointer.next = oddPointer.next;     // ...so connect current even node to the node after the current odd node
+      evenPointer = oddPointer.next;          // ...and move the even node pointer to the most recent even node
     }
-    evenPointer.next = oddPointer.next;     // connect current even node to the node after the current odd node
-    evenPointer = oddPointer.next;          // move the even node pointer to the most recent even node
   }
   
   // CONNECT ODDS TO EVENS
-  oddPointer.next = firstEvenNode;            // connect most recent odd node to the first even node
+  oddPointer.next = firstEvenNode;            // connect final odd node to the first even node
   
   return head;
 }
@@ -99,75 +104,35 @@ test(func, input, expected, testNum, lowestTest, highestTest);
 
 // Test case 2
 input = {
-  head: new SinglyLinkedList(1),
+  head: new ListNode(1),
 };
-expected = new SinglyLinkedList(1);
+expected = new ListNode(1);
 test(func, input, expected, testNum, lowestTest, highestTest);
 
 // Test case 3
 input = {
-  head: new SinglyLinkedList(1)
-    .insert(2)
-    .insert(3)
-    .insert(4)
-    .insert(5),
+  head: new ListNode(1, 2, 3, 4, 5),
 };
-expected = new SinglyLinkedList(1)
-  .insert(3)
-  .insert(5)
-  .insert(2)
-  .insert(4);
+expected = new ListNode(1, 3, 5, 2, 4);
 test(func, input, expected, testNum, lowestTest, highestTest);
 
 // Test case 4
 input = {
-  head: new SinglyLinkedList(1)
-    .insert(2)
-    .insert(3)
-    .insert(4)
-    .insert(5)
-    .insert(6),
+  head: new ListNode(1, 2, 3, 4, 5, 6),
 };
-expected = new SinglyLinkedList(1)
-  .insert(3)
-  .insert(5)
-  .insert(2)
-  .insert(4)
-  .insert(6);
+expected = new ListNode(1, 3, 5, 2, 4, 6);
 test(func, input, expected, testNum, lowestTest, highestTest);
 
 // Test case 5
 input = {
-  head: new SinglyLinkedList('A')
-    .insert('B')
-    .insert('C')
-    .insert('D')
-    .insert('E')
-    .insert('F'),
+  head: new ListNode('A', 'B', 'C', 'D', 'E', 'F'),
 };
-expected = new SinglyLinkedList('A')
-  .insert('C')
-  .insert('E')
-  .insert('B')
-  .insert('D')
-  .insert('F');
+expected = new ListNode('A', 'C', 'E', 'B', 'D', 'F');
 test(func, input, expected, testNum, lowestTest, highestTest);
 
 // Test case 6
 input = {
-  head: new SinglyLinkedList(['A'])
-    .insert(['B'])
-    .insert(['C'])
-    .insert(['D'])
-    .insert(['E'])
-    .insert(['F'])
-    .insert(['G']),
+  head: new ListNode(['A'], ['B'], ['C'], ['D'], ['E'], ['F'], ['G']),
 };
-expected = new SinglyLinkedList(['A'])
-  .insert(['C'])
-  .insert(['E'])
-  .insert(['G'])
-  .insert(['B'])
-  .insert(['D'])
-  .insert(['F']);
+expected = new ListNode(['A'], ['C'], ['E'], ['G'], ['B'], ['D'], ['F']);
 test(func, input, expected, testNum, lowestTest, highestTest);
