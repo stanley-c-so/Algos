@@ -46,7 +46,7 @@ function solution_1 (nums, k) {
   for (let i = 0; i < nums.length; i++) {
 
     // STEP 1: (i >= k) IF NUMBER TO BE SHIFTED OUT OF WINDOW IS CURRENTLY FIRST IN maxStack, SHIFT IT OUT OF maxStack
-    if (nums[i - k] === maxStack[0]) {
+    if (i >= k && nums[i - k] === maxStack[0]) {
       maxStack.shift();
     }
     
