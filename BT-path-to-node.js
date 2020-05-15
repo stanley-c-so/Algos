@@ -19,8 +19,8 @@
 // NOTE: I developed the following BinaryTree and Batch classes for easy creation of binary trees with arbitrary values.
 
 class BinaryTree {
-  constructor (value) {
-    this.value = value;
+  constructor (val) {
+    this.val = val;
     this.left = null;
     this.right = null;
   }
