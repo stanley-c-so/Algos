@@ -2,15 +2,15 @@
 
 // DESCRIPTION_HERE
 
-// SWITCHING BETWEEN SOLUTIONS:
-const NAME_OF_ALGO_HERE = solution_1;
-
 function solution_1 (INPUT_HERE) {
 
   // SOLUTION 1 [O(?) time, O(?) space]:
   // description
 
 }
+
+// SWITCHING BETWEEN SOLUTIONS:
+const NAME_OF_ALGO_HERE = solution_1;
 
 // TEST CASES
 
