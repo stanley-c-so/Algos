@@ -2,6 +2,8 @@
 
 // DESCRIPTION_HERE
 
+// ----------
+
 function solution_1 (INPUT_HERE) {
 
   // SOLUTION 1 [O(?) time, O(?) space]:
