@@ -39,7 +39,7 @@ class ListNode {
 }
 
 // SWITCHING BETWEEN SOLUTIONS:
-const oddEvenList = solution_1;
+const oddEvenList = solution_2;
 
 function solution_1 (head) {
 
@@ -83,6 +83,34 @@ function solution_1 (head) {
   return head;
 }
 
+function solution_2 (head) {
+
+  // SOLUTION 2 [O(n) time, O(1) space]:
+  // same idea as above, except the while loop condition will also include that the `even` pointer must exist. thus, if `even` ends up pointing to null (because the number of nodes is odd), we never have
+  // to read a property from it
+  
+  // EDGE CASES: 0- OR 1-NODE LIST
+  if (!head) return null;
+  if (!head.next) return head;
+
+  // INITIALIZATIONS
+  const firstEvenNode = head.next;
+  let odd = head;
+  let even = firstEvenNode;
+  
+  // ITERATE WHILE `even` EXISTS AND HAS A NODE AFTER IT
+  while (even && even.next) {                 // HERE, WE ADDED `even` TO THE CONDITION!
+    odd.next = even.next;                     // connect current `odd` node to the node after the current `even` node
+    odd = even.next;                          // move the `odd` node pointer to the most recent `odd` node
+    even.next = odd.next;                     // now that `odd` has moved up, do the same for `even`
+    even = odd.next;                          // (it is possible that `even` is now null)
+  }
+  
+  // CONNECT ODDS TO EVENS
+  odd.next = firstEvenNode;                   // connect final odd node to the first even node
+  
+  return head;
+}
 
 // TEST CASES
 
