@@ -61,7 +61,7 @@ function solution_1 (head) {
   // PASS 1: CREATE A CLONE FOR EACH ORIGINAL NODE
   let node = head;
   while (node) {
-    node.clone = new Node(node.val, null, null);                      // the extra `null` is so this can match leetcode's both Node constructor (values for .next and .random) and my test suite
+    node.clone = new Node(node.val, null, null);                      // the extra `null` is so this can match both leetcode's Node constructor (values for .next and .random) and my test suite
     node = node.next;
   }
 
