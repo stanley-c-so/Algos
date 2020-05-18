@@ -73,7 +73,7 @@ function solution_1 (head) {
     node = node.next;
   }
 
-  // // OPTIONAL PASS 3 (NOT REQUIRED BY SPECS): DELETE CONE POINTERS FROM ORIGINAL LIST. YOU CAN COMMENT THIS PART IN OR OUT
+  // // OPTIONAL PASS 3 (NOT REQUIRED BY SPECS): DELETE CLONE POINTERS FROM ORIGINAL LIST. YOU CAN COMMENT THIS PART IN OR OUT
   // const output = head.clone;        // a reference to the final output since we will be deleting `.clone` pointers
   // node = head;
   // while (node) {
