@@ -140,7 +140,7 @@ class solution_2 {
     if (!(key in this.cache)) {
       if (this.size === this.capacity) {                // see if the cache is currently at capacity
         delete this.cache[this.tail.key];               // if so, delete tail's key from the cache...
-        this.remove(this.tail);                         // ...and remove the tail
+        this.remove(this.tail);                         // ...and remove the tail. NOTE: ORDER MATTERS! IF YOU REMOVE TAIL FIRST, THEN `this.tail.key` WILL BE DIFFERENT!
       }
       this.cache[key] = {                               // create new cache entry...
         key,
