@@ -19,9 +19,6 @@
 
 // Note: I wrote the ListNode class for this exercise.
 
-// SWITCHING BETWEEN SOLUTIONS:
-const flatten = solution_2;
-
 class ListNode {
   constructor (val, ...extraVals) {
     this.val = val;
@@ -62,8 +59,8 @@ function solution_1 (head) {
   // other hand, is easier to figure out - basically, you don't care about .prev connections until you configure the whole thing in the forward direction, and then you make a second
   // pass through the list to reconfigure the .prev connections.
 
-  // EDGE CASE: NO NODE
-  if (!head) return null;
+  // OPTIONAL EDGE CASE: NO NODE
+  // if (!head) return null;                                         // this is optional because if `head` is null, then the final return statement returns `null` which is correct
 
   // INITIALIZATION
   let currentNode = head;
@@ -104,8 +101,8 @@ function solution_2 (head) {
   // of the head, OR if the final sibling had any children, then whatever is the final node at that level). the main function, then, only needs to invoke the helper with the original
   // head and return the 0 index.
 
-  // EDGE CASE: NO NODE
-  if (!head) return null;
+  // OPTIONAL EDGE CASE: NO NODE
+  // if (!head) return null;                                         // this is optional because if `head` is null, then the final return statement returns `null` which is correct
 
   // RECURSIVE HELPER FUNCTION
   const helper = head => {
@@ -150,6 +147,9 @@ function solution_2 (head) {
   // // FINALLY, JUST RETURN head
   // return head;
 }
+
+// SWITCHING BETWEEN SOLUTIONS:
+const flatten = solution_2;
 
 // TEST CASES
 
