@@ -122,58 +122,59 @@ class solution_1 {
 // life easier. note that our constructor now needs to track size, head, and tail, alongside cache.
 class solution_2 {
   constructor (capacity) {
-    this.capacity = capacity;                           // to enforce size limit
+    this.capacity = capacity;                             // to enforce size limit
     this.size = 0;
-    this.head = null;                                   // for DLL management
-    this.tail = null;                                   // for DLL management
+    this.head = null;                                     // for DLL management
+    this.tail = null;                                     // for DLL management
     this.cache = {};
   }
   get (key) {
-    if (!(key in this.cache)) return -1;                // if `key` is not in the cache, return -1 only
+    if (!(key in this.cache)) return -1;                  // if `key` is not in the cache, return -1 only
     const node = this.cache[key];
-    this.remove(node);                                  // else, we have to remove the node from wherever it is in the doubly linked list...
-    this.insertAsHead(node);                            // ...and reinsert it into the head position...
-    return node.val;                                    // ...before returning its value
+    this.remove(node);                                    // else, we have to remove the node from wherever it is in the doubly linked list...
+    this.insertAsHead(node);                              // ...and reinsert it into the head position...
+    return node.val;                                      // ...before returning its value
   }
   put (key, value) {
-    const val = value;                                  // in leetcode, the signature is prepopulated with `value`, but i wanted to use `val`
+    const val = value;                                    // in leetcode, the signature is prepopulated with `value`, but i wanted to use `val`
+    const node = key in this.cache ? this.cache[key] : {  // save reference to the node if it exists in `this.cache`, or else create it
+      key,
+      val,
+      next: null,
+      prev: null
+    };
     if (!(key in this.cache)) {
-      if (this.size === this.capacity) {                // see if the cache is currently at capacity
-        delete this.cache[this.tail.key];               // if so, delete tail's key from the cache...
-        this.remove(this.tail);                         // ...and remove the tail. NOTE: ORDER MATTERS! IF YOU REMOVE TAIL FIRST, THEN `this.tail.key` WILL BE DIFFERENT!
+      if (this.size === this.capacity) {                  // see if the cache is currently at capacity
+        delete this.cache[this.tail.key];                 // if so, delete tail's key from the cache...
+        this.remove(this.tail);                           // ...and remove the tail. NOTE: ORDER MATTERS! IF YOU REMOVE TAIL FIRST, THEN `this.tail.key` WILL BE DIFFERENT!
       }
-      this.cache[key] = {                               // create new cache entry...
-        key,
-        val,
-        next: null,
-        prev: null,
-      };
+      this.cache[key] = node;
     } else {
-      this.cache[key].val = val;                        // overwrite existing cache entry
-      this.remove(this.cache[key]);                     // ...and remove node from wherever it is in the doubly linked list
+      node.val = val;                                     // overwrite existing cache entry
+      this.remove(node);                                  // ...and remove node from wherever it is in the doubly linked list
     }
-    this.insertAsHead(this.cache[key]);                 // (re)insert the new node into head
+    this.insertAsHead(node);                              // (re)insert the new node into head
   }
-  remove (node) {                                       // THIS SHOULD ONLY BE CALLED ON NODES THAT ACTUALLY EXIST IN THE DOUBLY LINKED LIST
-    if (node.prev) node.prev.next = node.next;          // (if applicable) connect prev to next
-    if (node.next) node.next.prev = node.prev;          // (if applicable) connect next to prev
-    if (node === this.head) this.head = node.next;      // (if applicable) set new head
-    if (node === this.tail) this.tail = node.prev;      // (if applicable) set new tail
-    node.prev = null;                                   // disconnect `node` from prev (note: we don't have to disconnect from next, since a removed node will always be a tail, OR inserted into head)
+  remove (node) {                                         // THIS SHOULD ONLY BE CALLED ON NODES THAT ACTUALLY EXIST IN THE DOUBLY LINKED LIST
+    if (node.prev) node.prev.next = node.next;            // (if applicable) connect prev to next
+    if (node.next) node.next.prev = node.prev;            // (if applicable) connect next to prev
+    if (node === this.head) this.head = node.next;        // (if applicable) set new head
+    if (node === this.tail) this.tail = node.prev;        // (if applicable) set new tail
+    node.prev = null;                                     // disconnect `node` from prev (note: we don't have to disconnect from next, since a removed node will always be a tail, OR inserted into head)
     this.size--;
   }
   insertAsHead (node) {
     node.next = this.head;
     if (this.head) this.head.prev = node;
     this.head = node;
-    if (!this.tail) this.tail = node;
+    if (!this.tail) this.tail = node;                     // we need this in case we are inserting into an empty list
     this.size++;
   }
 }
 
 const specialTest = (capacity, commands, inputs) => {
   const cache = new LRUCache(capacity);
-  const ref = {                                         // this object holds references to the LRUCache methods...
+  const ref = {                                           // this object holds references to the LRUCache methods...
     get: cache.get,
     put: cache.put,
   };
