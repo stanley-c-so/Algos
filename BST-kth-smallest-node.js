@@ -58,7 +58,7 @@ class BST {
   kthSmallest (k) { return this.solution_2(...arguments); }
 
   solution_1 (k) {             // if writing this out as a separate function, there would be a "root" argument as well. here, we can just reference 'this'
-    // SOLUTION 1 [O(n) time, O(n)? space]:
+    // SOLUTION 1 [O(n) time, O(n) space]:
     // in this solution, we collect into an array the values of all nodes via recursive in-order traversal, and then return the kth element from the array. the recursion is done
     // in the helper function, which returns an empty array in the base case (where root node does not exist), and merges the array from recursed call at root.left, root.value,
     // and recursed call at root.right.
@@ -70,8 +70,29 @@ class BST {
     return helper(this)[k - 1];
   }
 
-  solution_2 (k) {             // if writing this out as a separate function, there would be a "root" argument as well. here, we can just reference 'this'
+  solution_2 (k) {
     // SOLUTION 2 [O(n) time, O(n) space]:
+    // similar to solution 1 using recursion, but we add the ability to stop once we find the kth smallest element: whenever a new potential output is found, we decrement `k` and we
+    // check if `k` has reached 0. if so, we immediately return from the current stack frame. we have to add two of these checks - once immediately after recursing to the left, and once
+    // after processing current node (when `output` is set to `root.value`).
+    
+    let output;
+    function helper (root) {
+      if (root.left) {                        // if there is anything to the left, we start by recursing there
+        helper(root.left);
+        if (!k) return;                       // if `k` became 0 somewhere while recursing to the left, we need to add a check here to prevent further processing
+      }
+      output = root.value;                    // now we process current node. we reassign `output` to `root.value` as this node is potentially the kth smallest node
+      --k;                                    // decrement `k` as we approach the kth smallest node
+      if (!k) return;                         // the moment `k` becomes 0, we stop processing
+      if (root.right) helper(root.right);     // if there is anything to the right, we recurse there next
+    }
+    helper(this);
+    return output;
+  }
+
+  solution_3 (k) {             // if writing this out as a separate function, there would be a "root" argument as well. here, we can just reference 'this'
+    // SOLUTION 3 [O(n) time, O(n) space]:
     // in this iterative solution, we do not need to burden the call stack. the key difference is that as soon as the kth smallest element has been found, we can end our traversal
     // immediately. i'm not entirely sure what the complexities would be in the average case (i suspect log(n)) but in the worst case it would be n (if given a degenerate tree). the
     // way the iterative solution works is to use a stack to keep track of ancestor nodes. we initialize `root` to the actual root of the initial tree - think of `root` as
