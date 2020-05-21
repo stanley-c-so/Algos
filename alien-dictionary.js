@@ -159,12 +159,12 @@ function solution_2 (words) {
   // function, we call the helper on every node in the adjacency list. if at any time the helper comes back false, we have an impossible dictionary. otherwise, our `output` should have been compiled, so we
   // simply join it together.
 
-  // EDGE CASE: INPUT 1 (input will be non-empty so there is no input 0)
-  if (words.length === 1) {                           // leetcode does some kind of weird parsing, so you could just return `words[0]`. even if input is `['aab']` it thinks your output is 'ab'
-    const letters = new Set();
-    for (const c of words[0]) letters.add(c);
-    return [...letters].join('');                     // if we just returned `words[0]`, what if there are repeat characters? do it this way to avoid repeat characters
-  }
+  // // UNNECESSARY EDGE CASE HANDLING: INPUT 1 (input will be non-empty so there is no input 0)
+  // if (words.length === 1) {                           // leetcode does some kind of weird parsing, so you could just return `words[0]`. even if input is `['aab']` it thinks your output is 'ab'
+  //   const letters = new Set();
+  //   for (const c of words[0]) letters.add(c);
+  //   return [...letters].join('');                     // if we just returned `words[0]`, what if there are repeat characters? do it this way to avoid repeat characters
+  // }
     
   // CREATE `dependsOn` ADJACENCY LIST: every unique char gets an empty set
   const dependsOn = words.reduce((list, word) => {
