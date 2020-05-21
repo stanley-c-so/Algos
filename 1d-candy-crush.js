@@ -2,9 +2,6 @@
 
 // Given a string, reduce the string by removing 3 or more consecutive identical characters. (If removing consecutive characters results in another block of 3 or more characters, remove that too - keep removing until you can no longer remove.) You should greedily remove characters from left to right.
 
-// SWITCHING BETWEEN SOLUTIONS:
-const candyCrush = solution_3;
-
 function solution_1 (str) {
 
   // SOLUTION 1 [O(n^2) time (the number of recursions is possibly proportional to n, and each time we recurse, we have to run through the string again), O(n) space (call stack)]:
@@ -68,6 +65,7 @@ function solution_3 (str) {
   // ITERATE THROUGH EVERY CHARACTER
   for (let i = 0; i < str.length; i++) {
     if (skip && str[i] === str[i - 1]) continue;    // if `skip` is set to true AND current letter is the same as previous, skip this iteration
+    skip = false;                                   // otherwise, reset `skip` to false
     if (                                            // otherwise, always check if the current letter creates a 3 in a row
       stack.length >= 2
       && str[i] === stack[stack.length - 1]
@@ -75,15 +73,17 @@ function solution_3 (str) {
     ) {
       stack.pop();                                  // if 3 in a row, pop out the 2, and set `skip` to true (in case we have to skip any subsequent letters)
       stack.pop();
-      skip = true;
+      skip = true;                                  // any time you find 3 in a row, set `skip` to true
     } else {                                        // if no 3 in a row, push current character into the stack, and set `skip` to false
       stack.push(str[i]);
-      skip = false;
     }
   }
 
   return stack.join('');
 }
+
+// SWITCHING BETWEEN SOLUTIONS:
+const candyCrush = solution_3;
 
 // TEST CASES
 
