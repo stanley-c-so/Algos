@@ -74,7 +74,7 @@ function solution_3 (str) {
       stack.pop();                                  // if 3 in a row, pop out the 2, and set `skip` to true (in case we have to skip any subsequent letters)
       stack.pop();
       skip = true;                                  // any time you find 3 in a row, set `skip` to true
-    } else {                                        // if no 3 in a row, push current character into the stack, and set `skip` to false
+    } else {                                        // if no 3 in a row, push current character into the stack
       stack.push(str[i]);
     }
   }
